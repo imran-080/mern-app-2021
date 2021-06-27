@@ -2,6 +2,7 @@
 const exp = require('express');
 const app = exp()
 const path = require("path")
+require('dotenv').config()
 
 
 // creating build of react with current user
@@ -22,8 +23,7 @@ app.use('/admin',adminApi)
 //database connectiivity
 const mongoClient = require('mongodb').MongoClient;
 
-const dburl ="mongodb+srv://924080cdb:924080cdb@imran7866.xd0vx.mongodb.net/924080cdb?retryWrites=true&w=majority"
-
+const dburl =process.env.DATABASE_URL;
 //database obj
 //let databaseObject;
 
@@ -39,12 +39,14 @@ mongoClient.connect(dburl,{ useNewUrlParser:true, useUnifiedTopology: true },(er
         let userCollectionObject = databaseObject.collection("user-collection")
         let productCollectionObject = databaseObject.collection("productcollection")
         let adminCollectionObject = databaseObject.collection("admincollection")
+        let userCartCollectionObject = databaseObject.collection("usercartcollection")
         
 
         //sharing collection object
         app.set("userCollectionObject",userCollectionObject)
         app.set("productCollectionObject",productCollectionObject)
         app.set("adminCollectionObject",adminCollectionObject)
+        app.set("userCartCollectionObject",userCartCollectionObject)
         console.log("DB connection is successful")
     }
 })
@@ -69,5 +71,5 @@ app.get('/*', (req, res)=> {
 
 
 // assign port 
-const port =8080;
+const port =process.env.PORT || 8080;
 app.listen(port,()=> console.log(`server listening on port ${port}..`)) 

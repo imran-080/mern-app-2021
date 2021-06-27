@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const expressErrorHandler = require('express-async-handler');
 
 const multerObj = require("./middlewares/addfile")
+require('dotenv').config()
 
 
 //configure cloudinary
@@ -153,6 +154,57 @@ userApi.post("/login",expressErrorHandler( async(req,res,next) =>{
         }
     }
 
+}))
+
+//Add to cart
+userApi.post("/addtocart",expressErrorHandler(async(req,res,next)=>{
+
+    let userCartCollectionObject = req.app.get("userCartCollectionObject")
+
+
+    //get usercart Obj
+    let userCartObj = req.body;
+    console.log("usercartobj is",userCartObj)
+    let userInCart = await userCartCollectionObject.findOne({ username: userCartObj.username})
+    
+    // if user is not existed in cart
+
+    if(userInCart === null){
+        let products= [];
+        products.push(userCartObj.productObj)
+        let newUserCartObject = {username:userCartObj.username,products: products};
+      //  newUserCartObject.username = userCartObj.username
+        //console.log(newUserCartObject)
+
+        // await
+        await userCartCollectionObject.insertOne(newUserCartObject)
+        res.send({message: "Product added to cart"})
+    }
+    else{
+        userInCart.products.push(userCartObj.productObj)
+        //update
+
+        await userCartCollectionObject.updateOne({ username: userCartObj.username}, {$set:{...userInCart}})
+        res.send({ message : "product added to cart "})
+
+    }
+}))
+
+userApi.get("/getcart", expressErrorHandler(async (req, res, next) => {
+
+    let userCartCollectionObject = req.app.get("userCartCollectionObject");
+
+    let cartObj = await userCartCollectionObject.find().toArray();
+    res.send({ message: cartObj })
+
+}))
+//get cart data
+userApi.get("/getcart/:username",expressErrorHandler(async(req,res,next)=>{
+    let userCartCollectionObject=req.app.get("userCartCollectionObject")
+    let un=req.params.username
+    let cartList=await userCartCollectionObject.find({username:un}).toArray()
+    console.log("cart list is",cartList)
+    res.send({message:cartList})
 }))
 
 

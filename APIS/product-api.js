@@ -34,10 +34,14 @@ productApi.post("/createproduct",multerObj.single('photo'),expressErrorHandler( 
 // get product
 
 
-productApi.get("/getproduct",expressErrorHandler( async (req,res,next) =>{
-    let productCollectionObject = req.app.get("productCollectionObject")
-    let productList= await productCollectionObject.find().toArray();
-    res.send({message : productList})
+
+
+productApi.get("/viewproducts", expressErrorHandler(async (req, res, next) => {
+
+    let productCollectionObject = req.app.get("productCollectionObject");
+
+    let products = await productCollectionObject.find().toArray();
+    res.send({ message: products })
 
 }))
 

@@ -24,7 +24,7 @@ function AddProduct(){
        .then(res =>{
            let productObj= res.data;
            alert(productObj.message)
-           history.push('/view-product')
+           history.push('/view-products')
        })
        .catch(err =>{
            console.log(err);
@@ -51,8 +51,11 @@ function AddProduct(){
 
         {/* price */}
         <label htmlFor="pr">Price</label>
-            <input type="number" id="pr" {...register('Price')}  className="form-control mb-3"/>
-            <input type="file" name="photos" className="form-control mt-3 mb-3" onChange={(e)=>{onFileSelect(e)}}></input>
+            <input type="number" id="pr" {...register('price')}  className="form-control mb-3"/>
+            <textarea type="text" className="form-control mb-3"  {...register("description")} placeholder="description" />
+            <input type="file" name="photos"  className="form-control mt-3 mb-3" onChange={(e)=>{onFileSelect(e)}}
+            {...register("productImage")}
+            ></input>
 
             <button type="submit" className="btn btn-danger">Add product</button>
           </form>
